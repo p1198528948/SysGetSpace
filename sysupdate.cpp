@@ -8,7 +8,7 @@ SysUpdate::SysUpdate()
 
 }
 
-Bit64 SysUpdate::SysGetSize(const QString &path)
+Bit64 SysUpdate::SysGetDirSize(const QString &path)
 {
     QDir dir(path);
     Bit64 size = 0;
@@ -23,9 +23,41 @@ Bit64 SysUpdate::SysGetSize(const QString &path)
     //返回所有子目录，并进行过滤
     foreach(QString subDir, dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
     {
-        //若存在子目录，则递归调用SysGetSize()函数
-        size += SysGetSize(path + QDir::separator() + subDir);
+        //若存在子目录，则递归调用SysGetDirSize()函数
+        size += SysGetDirSize(path + QDir::separator() + subDir);
     }
 
     return size;
+}
+
+Bit64 SysUpdate::SysGetFileSize(const QString &path)
+{
+    QFileInfo info(path);
+    if (info.exists())
+    {
+        return info.size();
+    }
+
+    return -1;
+}
+
+Bit64 SysUpdate::SysGetSize(const QString &path)
+{
+    QFileInfo info(path);
+    Bit64 size = 0;
+
+    if(info.exists())
+    {
+        if(info.isFile())
+        {
+            size = SysGetFileSize(path);
+            return size;
+        }
+        else if(info.isDir())
+        {
+            size = SysGetDirSize(path);
+            return size;
+        }
+    }
+    return -1;
 }

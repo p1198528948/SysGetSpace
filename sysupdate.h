@@ -13,6 +13,8 @@ public:
     ~SysUpdate();
 
 
+    static Bit64 SysGetDirSize(const QString &path);
+    static Bit64 SysGetFileSize(const QString &path);
     static Bit64 SysGetSize(const QString &path);
 };
 
